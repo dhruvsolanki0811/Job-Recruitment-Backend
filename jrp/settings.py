@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'accounts',    
     'jobprofile',
+    'applicant',
     'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -147,7 +148,7 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [ 
-   'http://localhost:3000/',
+   'http://localhost:3000',
 ]
 
 

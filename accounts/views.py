@@ -120,12 +120,12 @@ def organizationlogin(request):
     if not user.check_password(password):
         return Response({'error': 'Invalid password.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    
+    org_resp=OrganizationSerializer(organization)
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
 
 
-    return Response({"refresh":str(refresh),'access': access_token}, status=status.HTTP_200_OK)
+    return Response({"refresh":str(refresh),'access': access_token,"role":"Organization","user":org_resp.data}, status=status.HTTP_200_OK)
     
 @api_view(['POST'])
 def jobseekerlogin(request):
@@ -148,12 +148,12 @@ def jobseekerlogin(request):
     if not user.check_password(password):
         return Response({'error': 'Invalid password.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    
+    jobseeker_resp=JobSeekerSerializer(jobseeker)
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
 
 
-    return Response({"refresh":str(refresh),'access': access_token}, status=status.HTTP_200_OK)
+    return Response({"refresh":str(refresh),'access': access_token,"role":"Jobseeker","user":jobseeker_resp.data}, status=status.HTTP_200_OK)
     
     
     
