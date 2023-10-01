@@ -32,6 +32,6 @@ class JobProfileSerializer(serializers.ModelSerializer):
         jobProfile=JobProfile(role=data['role'],required_experience=data['required_experience'],
                               employee_type=data['employee_type'],salary=data['salary'],
                               job_description=data['job_description'],organization=organization)
-        # jobProfile.save()
+        jobProfile.save()
         # print(jobProfile)
         return jobProfile

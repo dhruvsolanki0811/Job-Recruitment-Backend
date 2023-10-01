@@ -8,7 +8,7 @@ from .models import Organization,JobSeeker
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
-from .permissions import isOrganizationPermission
+from .permissions import isOrganizationPermissionOrReadOnly
 from .serializers import UserSerializer
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -17,7 +17,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # Create your views here.
 @api_view(['GET'])
 # @authentication_classes([])
-@permission_classes([isOrganizationPermission])
+@permission_classes([isOrganizationPermissionOrReadOnly])
 def hello_world(request):
     return Response({"message": "Hello, world!"})
 

@@ -1,12 +1,27 @@
 from rest_framework import permissions
-class isOrganizationPermission(permissions.BasePermission):
+from django.contrib.auth.models import User
+from accounts.models import Organization
+import json
+
+class isOrganizationPermissionOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
-        print(request)
-        print(view.kwargs,'has')
-        return False
-    def has_object_permission(self, request, view, obj):
-        print(request)
-        print(view.kwargs)
-        print(obj)
+        # print(view.kwargs['username'])
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if(not request.user.is_authenticated):
+                return False
+        user= User.objects.filter(email=request.user.email)
+        if not user.exists():
+            return False
+        reqbody=json.loads(request.body.decode('utf-8'))
+
+        organization = Organization.objects.filter(user=user[0].id,id=reqbody['organization_id'])
         
-        return False
+        if not organization.exists() :
+            return False
+        
+        
+        return True
+
+    
+    

@@ -2,7 +2,7 @@ from rest_framework import permissions
 from django.contrib.auth.models import User
 from .models import Organization,JobSeeker
 
-class isOrganizationPermission(permissions.BasePermission):
+class isOrganizationPermissionOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         # print(view.kwargs['username'])
         if request.method in permissions.SAFE_METHODS:
