@@ -8,7 +8,8 @@ class JobProfile(models.Model):
     employee_type=models.CharField(max_length=100)
     salary=models.IntegerField()
     job_description=models.TextField()
-    
+    skills_required = models.JSONField(default=list)
+
     organization=models.ForeignKey(Organization,on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)

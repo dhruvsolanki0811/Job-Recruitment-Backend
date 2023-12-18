@@ -11,7 +11,8 @@ class Organization(models.Model):
     website= models.URLField(max_length=150)
     overview= models.TextField()
     founded_at= models.CharField(max_length=5)
-    
+    profile_pic = models.ImageField(upload_to='organization/profile_pics/', blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -28,10 +29,9 @@ class JobSeeker(models.Model):
     description= models.TextField()
     phone_number= models.CharField( max_length=50)
     no_of_years_experience= models.IntegerField()
-    resume=models.URLField(max_length=200)
     skills = models.JSONField(default=list)
-    # resume = models.FileField(upload_to='resumes/', blank=True, null=True)
-    # profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    resume = models.FileField(upload_to='resumes/', blank=True, null=True)
+    profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -20,36 +20,48 @@ class JobSeekerSerializer(serializers.ModelSerializer):
     firstname = serializers.CharField(source='user.first_name')  
     password=serializers.CharField(source='user.password',write_only=True,style={'input_type': 'password'})
 
+    resume = serializers.FileField( required=False,write_only=True)
+    profile_pic = serializers.ImageField( required=False)
+    
+    
     class Meta:
         model = JobSeeker
-        fields=['id','username', 'email', 'password','firstname','lastname','description','no_of_years_experience','phone_number','resume','skills']
+        fields=['id','username', 'email', 'password','firstname','lastname','description','no_of_years_experience','phone_number','resume','skills','resume', 'profile_pic' ]
         extra_kwargs = {
             # 'skills':{'read_only':True}
-            'id':{'read_only':True}
-
-        }
+            'id':{'read_only':True},
+            'resume': {'write_only': True},
+            # 'profile_pic': {'write_only': True},
+            }
     def create(self, validated_data):
-        data= validated_data
-        if User.objects.filter(email=data['user']['email']).exists():
+        user_data = validated_data.pop('user')
+        email = user_data.get('email')
+        username = user_data.get('username')
+
+        if User.objects.filter(email=email).exists():
             raise serializers.ValidationError({'error': 'Email already exists!'})
-        if User.objects.filter(username=data['user']['username']).exists():
+        if User.objects.filter(username=username).exists():
             raise serializers.ValidationError({'error': 'Username already exists!'})
-        
-        user=User(username=data['user']['username'],email=data['user']['email'],
-                  first_name=data['user']['first_name'],last_name=data['user']['last_name']
-                  )
-        user.set_password(data['user']['password'])
 
-        jobseeker=JobSeeker(description=data['description'],phone_number=data['phone_number'],
-                            no_of_years_experience=data['no_of_years_experience'],
-                            resume=data['resume'],skills=data['skills'])
-        jobseeker.user=user
+        user = User.objects.create(
+            username=username,
+            email=email,
+            first_name=user_data.get('first_name'),
+            last_name=user_data.get('last_name')
+        )
+        user.set_password(user_data.get('password'))
         user.save()
+        jobseeker = JobSeeker.objects.create(
+            user=user,
+            description=validated_data['description'],
+            phone_number=validated_data['phone_number'],
+            no_of_years_experience=validated_data['no_of_years_experience'],
+            resume=validated_data.get('resume',None),
+            profile_pic=validated_data.get('profile_pic',None),
+            skills=validated_data['skills']
+        )
 
-        jobseeker.save()
-
-        return jobseeker
-    
+        return jobseeker 
     
     
     
@@ -58,10 +70,11 @@ class OrganizationSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
     email = serializers.EmailField(source='user.email')  
     password=serializers.CharField(source='user.password',write_only=True)
-    
+    profile_pic = serializers.ImageField( required=False)
+
     class Meta:
         model = Organization
-        fields = [ 'id','username', 'email', 'password','location','name','website','overview','founded_at']
+        fields = [ 'id','username', 'email', 'password','location','name','website','overview','founded_at','profile_pic']
         extra_kwargs = {
             # 'skills':{'read_only':True}
             'id':{'read_only':True}
@@ -80,8 +93,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         user.set_password(data['user']['password'])
         user.save()
         
-        organization= Organization(name=data['name'],founded_at=data['founded_at'],overview=data['overview'],
-                          location=data['location'],website=data['website'])
+        organization= Organization(name=data['name'],founded_at=data['founded_at'],overview=data['overview'],profile_pic=validated_data.get('profile_pic',None),location=data['location'],website=data['website'])
 
        
         # user=
