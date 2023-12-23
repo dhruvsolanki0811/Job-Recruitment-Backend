@@ -18,4 +18,5 @@ urlpatterns = [
     path('jobseeker/<str:username>',views.JobSeekerView.as_view(),name='jobseeker-detail'),
     path('token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
+
 ]

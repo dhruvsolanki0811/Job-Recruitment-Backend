@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-from accounts.models import JobSeeker,Organization
+from accounts.models import JobSeeker
 from jobprofile.models import JobProfile
 
 class Application(models.Model):

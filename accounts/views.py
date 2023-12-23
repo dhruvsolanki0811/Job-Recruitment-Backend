@@ -7,12 +7,16 @@ from django.contrib.auth.models import User
 from .models import Organization,JobSeeker
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from django.http import JsonResponse
+
 from rest_framework.permissions import IsAuthenticated
 from .permissions import isOrganizationPermissionOrReadOnly
 from .serializers import UserSerializer
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 @api_view(['GET'])
@@ -27,7 +31,7 @@ class CreateOrganizationListView(generics.ListCreateAPIView):
     queryset=Organization.objects.all()
     
 
-class OrganizationView(generics.RetrieveDestroyAPIView):
+class OrganizationView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class=OrganizationSerializer
     queryset=Organization.objects.all()
     # permission_classes=[isOrganizationPermission]
@@ -79,7 +83,7 @@ class CreateJobSeekerListView(generics.ListCreateAPIView):
     serializer_class=JobSeekerSerializer
     queryset=JobSeeker.objects.all()
     
-class JobSeekerView(generics.RetrieveDestroyAPIView):
+class JobSeekerView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class=JobSeekerSerializer
     queryset=JobSeeker.objects.all()
     
@@ -98,8 +102,9 @@ class JobSeekerView(generics.RetrieveDestroyAPIView):
         instance.user.delete()
         # Delete the Organization instance
         instance.delete()
-
+        
 @api_view(['POST'])
+@csrf_exempt  # For testing purposes. Use a proper csrf token setup in production.
 def organizationlogin(request):
     email = request.data.get('email', None)
     password = request.data.get('password', None)
@@ -113,21 +118,29 @@ def organizationlogin(request):
         return Response({'error': 'Invalid email'}, status=status.HTTP_401_UNAUTHORIZED)
 
     try:
-        organization=Organization.objects.get(user=user)
+        organization = Organization.objects.get(user=user)
     except Organization.DoesNotExist:
         return Response({'error': 'Invalid email and password.'}, status=status.HTTP_401_UNAUTHORIZED)
 
     if not user.check_password(password):
         return Response({'error': 'Invalid password.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    org_resp=OrganizationSerializer(organization)
+    org_resp = OrganizationSerializer(organization)
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
 
+    response = JsonResponse(
+        {"refresh": str(refresh), 'access': access_token, "role": "Organization", "user": org_resp.data},
+        status=status.HTTP_200_OK
+    )
 
-    return Response({"refresh":str(refresh),'access': access_token,"role":"Organization","user":org_resp.data}, status=status.HTTP_200_OK)
-    
+    # Set the access token in a secure HTTP-only cookie
+    # response.set_cookie('access_token', access_token, httponly=True, samesite='Strict')
+
+    return response
+
 @api_view(['POST'])
+@csrf_exempt  # For testing purposes. Use a proper csrf token setup in production.
 def jobseekerlogin(request):
     email = request.data.get('email', None)
     password = request.data.get('password', None)
@@ -141,20 +154,24 @@ def jobseekerlogin(request):
         return Response({'error': 'Invalid email'}, status=status.HTTP_401_UNAUTHORIZED)
 
     try:
-        jobseeker=JobSeeker.objects.get(user=user)
+        jobseeker = JobSeeker.objects.get(user=user)
     except JobSeeker.DoesNotExist:
         return Response({'error': 'Invalid email and password.'}, status=status.HTTP_401_UNAUTHORIZED)
 
     if not user.check_password(password):
         return Response({'error': 'Invalid password.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    jobseeker_resp=JobSeekerSerializer(jobseeker)
+    jobseeker_resp = JobSeekerSerializer(jobseeker)
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
 
+    response = JsonResponse(
+        {"refresh": str(refresh), 'access': access_token, "role": "Jobseeker", "user": jobseeker_resp.data},
+        status=status.HTTP_200_OK
+    )
 
-    return Response({"refresh":str(refresh),'access': access_token,"role":"Jobseeker","user":jobseeker_resp.data}, status=status.HTTP_200_OK)
-    
-    
-    
-    
+    # Set the access token in a secure HTTP-only cookie
+    # response.set_cookie('access_token', access_token, httponly=True, samesite='Strict')
+
+    return response
+
