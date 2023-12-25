@@ -200,6 +200,7 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [ 
+    'https://jobcomrecruit.vercel.app',
    'http://localhost:3000',
    'http://localhost:5173',
 ]
