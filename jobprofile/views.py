@@ -37,17 +37,13 @@ class CreateJobProfileListView(generics.ListCreateAPIView):
             jobSeeker=JobSeeker.objects.filter(user=user)
 
             if jobSeeker.exists():
-                print(jobSeeker[0])
             # Exclude jobs that the authenticated user has already applied for
                 applied_jobs = Application.objects.filter(job_seeker=jobSeeker[0])
-                print(applied_jobs[0].job_profile)
                 # .applications.values_list('job_profile', flat=True)
                 for applied in applied_jobs:
-                    print(applied.job_profile.id)
                     queryset = queryset.exclude(id=applied.job_profile.id)
             else:
                 queryset=JobProfile.objects.all()      
-        print("1))",queryset)
         return queryset
 class JobProfileView(generics.RetrieveDestroyAPIView):
     serializer_class=JobProfileSerializer

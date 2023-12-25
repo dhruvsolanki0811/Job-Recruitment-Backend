@@ -22,7 +22,6 @@ class JobProfileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user= self._context['request'].user
         data=validated_data
-        print(data)
         
         if not Organization.objects.filter(pk=data['organization']['id']).exists():
             raise serializers.ValidationError({'error': 'No such organizations exists!'})

@@ -56,7 +56,6 @@ def job_applications(request, job_profile_id):
         # serializer = ApplicationSerializer(applications, many=True)
         seeker=[]
         for user in applications:
-            print(user.job_seeker)
             seeker.append(user.job_seeker)
         serializer=JobSeekerSerializer((seeker),many=True)
         return Response(serializer.data)
@@ -114,7 +113,6 @@ def has_applied_to_job(request, job_profile_id):
 
         # Check if the user has applied to the specified job profile
         has_applied = Application.objects.filter(job_seeker=job_seeker, job_profile=job_profile).exists()
-        print(job_profile,has_applied_to_job,job_seeker)
         response_data = {"has_applied": has_applied}
         return Response(response_data, status=status.HTTP_200_OK)
 

@@ -5,7 +5,6 @@ import json
 
 class isOrganizationPermissionOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
-        # print(view.kwargs['username'])
         if request.method in permissions.SAFE_METHODS:
             return True
         if(not request.user.is_authenticated):

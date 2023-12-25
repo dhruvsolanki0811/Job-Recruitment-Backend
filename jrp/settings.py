@@ -26,9 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+
+
 
 ALLOWED_HOSTS = ['*']
 
@@ -50,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'django_filters',
+    'storages'
 
 
 ]
@@ -68,6 +72,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'jrp.urls'
+AWS_ACCESS_KEY_ID=os.environ.get("AWS_ACCESS")
+AWS_SECRET_ACCESS_KEY=os.environ.get("AWS_SECRET")
+
+AWS_STORAGE_BUCKET_NAME='jobcom-media-1'
+AWS_S3_CUSTOM_DOMAIN='%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_FILE_OVERWRITE=False
 
 TEMPLATES = [
     {
@@ -98,13 +108,34 @@ WSGI_APPLICATION = 'jrp.wsgi.application'
 #     }
 # }
 
-# print(os.getenv('DATABASE_URL'))
-# db_url= os.getenv('DATABASE_URL')
-print(os.environ.get("DATABASE_URL"))
+
+# DATABASES={
+#     'default':dj_database_url.parse(os.environ.get("DATABASE_URL"))
+# }\
+    
 DATABASES={
-    'default':dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    'default':{
+        'ENGINE':'django.db.backends.postgresql',
+        'NAME':os.environ.get("DB_NAME"),
+        'USER':os.environ.get("DB_USER"),
+        "PASSWORD":os.environ.get("DB_PASSWORD"),
+        "HOST":os.environ.get("DB_HOST"),
+        "PORT":os.environ.get("DB_PORT"),
+    }
 }
 
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+        "OPTIONS": {
+         
+        }
+    },
+    "staticfiles":{
+            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

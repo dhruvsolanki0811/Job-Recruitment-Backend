@@ -17,7 +17,6 @@ class CreateConnectionView(generics.CreateAPIView):
     def perform_create(self, serializer):
         user1 = self.request.user.jobseeker
         user2= serializer.validated_data.get('user2')
-        # print(user2_id)
         user2 = get_object_or_404(JobSeeker, id=user2.id)
 
         # Validate that the current user matches the 'user1' in the request
@@ -60,12 +59,9 @@ def accept_connection(request, user1_id):
     user2 = request.user
     try:
         srcUser=User.objects.get(id=user2.id)
-        print(srcUser)
         user2=JobSeeker.objects.get(user=srcUser.id)
-        print(user2)
         
         user1_id=JobSeeker.objects.get(id=user1_id)
-        print(user1_id)
 
     except JobSeeker.DoesNotExist:
         return Response({'error': 'Validation error'}, status=status.HTTP_400_BAD_REQUEST)
@@ -73,7 +69,6 @@ def accept_connection(request, user1_id):
         return Response({'error': 'Validation error'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        print(user1_id,user2)
         connection = Connection.objects.get( user1=user1_id.id, user2=user2.id, status=Connection.PENDING)
     except Connection.DoesNotExist:
         return Response({'error': 'Validation error'}, status=status.HTTP_400_BAD_REQUEST)
@@ -89,11 +84,9 @@ def reject_connection(request, user1_id):
     user2=request.user
     try:
         srcUser=User.objects.get(id=user2.id)
-        print(srcUser)
         user2=JobSeeker.objects.get(user=srcUser.id)
         
         user1_id=JobSeeker.objects.get(id=user1_id)
-        print(user1_id)
 
     except JobSeeker.DoesNotExist:
         return Response({'error': 'Validation error'}, status=status.HTTP_400_BAD_REQUEST)
@@ -106,7 +99,6 @@ def reject_connection(request, user1_id):
     except User.DoesNotExist:
         return Response({'error': 'Validation error'}, status=status.HTTP_400_BAD_REQUEST)
     try:
-        print(user1_id,user2)
         connection = Connection.objects.get( user1_id=user1_id.id, user2=user2.id, status=Connection.PENDING)
     except Connection.DoesNotExist:
         return Response({'error': 'Validation error'}, status=status.HTTP_400_BAD_REQUEST)
@@ -165,7 +157,6 @@ class ListPendingConnectionRequestsSentView(generics.ListAPIView):
         pendingRequest =Connection.objects.filter(user1=jobseeker, status=Connection.PENDING)
         seekerList=[]
         for conn in pendingRequest:
-            print((conn.user2))
             seekerList.append(conn.user2)
         return seekerList 
 
@@ -205,17 +196,13 @@ def get_connection_status(request, user_id):
         user=JobSeeker.objects.get(user=request.user.id)
     except JobSeeker.DoesNotExist:
         return Response({'error': 'User not found'}, status=404)
-    print(target_user,request.user)
     # Check if there is a connection request or accepted connection betwe
     # en the two users
-    print(Connection.objects.filter(user2=user.id, user1=target_user.id))
     connection = Connection.objects.filter(user2=user.id, user1=target_user.id)
-    print(connection,'//////////////////////////')
     if connection.exists():
         connection_status = connection[0].status
     else:
         connection_status=None
-    print(connection,connection_status,"!")
     if connection_status is None:
         connection = Connection.objects.filter(user1=user, user2=target_user)
 
@@ -233,6 +220,5 @@ def get_connection_status(request, user_id):
     response_data = {
         'connection_status': connection_status,
         }
-    print(response_data)
     return Response(response_data, status=200)
    

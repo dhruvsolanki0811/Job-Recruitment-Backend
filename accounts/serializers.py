@@ -96,13 +96,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         organization= Organization(name=data['name'],founded_at=data['founded_at'],overview=data['overview'],profile_pic=validated_data.get('profile_pic',None),location=data['location'],website=data['website'])
 
        
-        # user=
-        # user_vd = validated_data.pop('user')
-        # organization = Organization(**validated_data)
-        # organization.save()
-
-        # print(validated_data)
-        # user= User.objects.create(user_vd)
+        
         organization.user = user
         organization.save()
 
