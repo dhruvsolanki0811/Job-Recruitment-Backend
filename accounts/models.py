@@ -8,7 +8,7 @@ class Organization(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name= models.CharField(max_length=150,unique=True)
     location = models.TextField()
-    website= models.URLField(max_length=150)
+    website= models.CharField(max_length=150)
     overview= models.TextField()
     founded_at= models.CharField(max_length=5)
     profile_pic = models.ImageField(upload_to='organization/profile_pics/', blank=True, null=True)

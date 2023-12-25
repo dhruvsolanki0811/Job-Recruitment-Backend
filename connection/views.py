@@ -22,7 +22,10 @@ class CreateConnectionView(generics.CreateAPIView):
         # Validate that the current user matches the 'user1' in the request
         if user1.id != serializer.validated_data.get('user1').id:
             raise serializers.ValidationError({'error': 'Validation error'})
-
+        if Connection.objects.filter(user1=user1,user2=user2).exists():
+            raise serializers.ValidationError({'error': 'Already exists connection error'})
+        if Connection.objects.filter(user2=user1,user1=user2).exists():
+            raise serializers.ValidationError({'error': 'Already exists connection error'})
         serializer.save(user1=user1, user2=user2, status='pending')
         
 @api_view(['DELETE'])
