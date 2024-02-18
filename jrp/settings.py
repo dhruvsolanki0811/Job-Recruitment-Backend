@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import environ
 import os
+import cloudinary
+
 env = environ.Env()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 env_path = os.path.join(BASE_DIR, '.env')
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     'jobprofile',
     'applicant',
     'connection',
+    'cloudinary_storage',
     'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'django_filters',
+    'cloudinary',
     'storages'
 
 
@@ -72,13 +76,17 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'jrp.urls'
-AWS_ACCESS_KEY_ID=os.environ.get("AWS_ACCESS")
-AWS_SECRET_ACCESS_KEY=os.environ.get("AWS_SECRET")
 
-AWS_STORAGE_BUCKET_NAME=os.environ.get("S3_NAME")
-AWS_S3_CUSTOM_DOMAIN='%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-AWS_S3_FILE_OVERWRITE=False
+# cloudinary.config(
+# cloud_name = os.environ.get("BUCKET_NAME"),
+# api_key = os.environ.get("BUCKET_KEY"),
+# api_secret = os.environ.get("BUCKET_SECRET"))
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME':os.environ.get("BUCKET_NAME") ,  # required
+    'API_KEY': os.environ.get("BUCKET_KEY"),  # required
+    'API_SECRET': os.environ.get("BUCKET_SECRET"),  # required
+}
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -96,6 +104,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'jrp.wsgi.application'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
 
 # Database
@@ -113,29 +123,30 @@ WSGI_APPLICATION = 'jrp.wsgi.application'
 #     'default':dj_database_url.parse(os.environ.get("DATABASE_URL"))
 # }\
     
-DATABASES={
-    'default':{
-        'ENGINE':'django.db.backends.postgresql',
-        'NAME':os.environ.get("DB_NAME"),
-        'USER':os.environ.get("DB_USER"),
-        "PASSWORD":os.environ.get("DB_PASSWORD"),
-        "HOST":os.environ.get("DB_HOST"),
-        "PORT":os.environ.get("DB_PORT"),
-    }
+# DATABASES={
+#     'default':{
+#         'ENGINE':'django.db.backends.postgresql',
+#         'NAME':os.environ.get("DB_NAME"),
+#         'USER':os.environ.get("DB_USER"),
+#         "PASSWORD":os.environ.get("DB_PASSWORD"),
+#         "HOST":os.environ.get("DB_HOST"),
+#         "PORT":os.environ.get("DB_PORT"),
+#     }
+# }
+
+DATABASES = {
+  'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': os.environ.get("DB_NAME"),
+    'USER': os.environ.get("DB_USER"),
+    'PASSWORD': os.environ.get("DB_PASSWORD"),
+    'HOST': os.environ.get("DB_HOST"),
+    'PORT': '5432',
+    'OPTIONS': {'sslmode': 'require'},
+  }
 }
 
 
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-        "OPTIONS": {
-         
-        }
-    },
-    "staticfiles":{
-            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -210,3 +221,4 @@ APPEND_SLASH=False
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_URL = '/static/'
