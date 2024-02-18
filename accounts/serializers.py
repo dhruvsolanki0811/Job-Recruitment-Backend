@@ -28,10 +28,8 @@ class JobSeekerSerializer(serializers.ModelSerializer):
         model = JobSeeker
         fields=['id','username', 'email', 'password','firstname','lastname','description','no_of_years_experience','phone_number','resume','skills','resume', 'profile_pic' ]
         extra_kwargs = {
-            # 'skills':{'read_only':True}
             'id':{'read_only':True},
             'resume': {'write_only': True},
-            # 'profile_pic': {'write_only': True},
             }
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -42,7 +40,7 @@ class JobSeekerSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'error': 'Email already exists!'})
         if User.objects.filter(username=username).exists():
             raise serializers.ValidationError({'error': 'Username already exists!'})
-
+        print(validated_data)
         user = User.objects.create(
             username=username,
             email=email,
