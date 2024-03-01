@@ -24,8 +24,9 @@ urlpatterns = [
     path('api/account/',include('accounts.urls')),
     path('api/jobs/',include('jobprofile.urls')),
     path('api/applicants/',include('applicant.urls')),
-    path('api/connections/',include('connection.urls'))
-
+    path('api/connections/',include('connection.urls')),
+    path('api/projects/',include('projects.urls')),
+    path('api/experience/',include('experience.urls'))
 ]
 
 if settings.DEBUG:

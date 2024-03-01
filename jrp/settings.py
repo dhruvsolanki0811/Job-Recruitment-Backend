@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'jobprofile',
     'applicant',
     'connection',
+    'projects',
+    'experience',
     'cloudinary_storage',
     'rest_framework_simplejwt',
     'django.contrib.admin',
