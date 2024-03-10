@@ -19,13 +19,14 @@ class CreateProjectView(generics.CreateAPIView):
             raise serializers.ValidationError({'error': 'User is not a job seeker'})
 
 @api_view(['GET'])
-def get_projects(request, jobseekerid):
+def get_projects(_, jobseekerusername):
     try:
-        projects = Project.objects.filter(job_seeker_id=jobseekerid)
+        jobseeker=JobSeeker.objects.get(user__username=jobseekerusername)
+        projects = Project.objects.filter(job_seeker=jobseeker)
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)
-    except Project.DoesNotExist:
-        return Response({"error": "Projects not found for the given job seeker ID"}, status=404)
+    except JobSeeker.DoesNotExist:
+        return Response({"error": "Jobseeker not found for the given job seeker ID"}, status=404)
     
 class SingleProjectView(generics.RetrieveAPIView):
     serializer_class=ProjectSerializer

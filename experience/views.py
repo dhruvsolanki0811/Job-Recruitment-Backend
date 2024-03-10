@@ -19,12 +19,13 @@ class CreateExperienceView(generics.CreateAPIView):
 
 
 @api_view(['GET'])
-def get_experiences_by_user(request, jobseekerid):
+def get_experiences_by_user(request, jobseekername):
     try:
-        experience = Experience.objects.filter(job_seeker_id=jobseekerid)
+        jobseeker=JobSeeker.objects.get(user__username=jobseekername)
+        experience = Experience.objects.filter(job_seeker=jobseeker)
         serializer = ExperienceSerializer(experience, many=True)
         return Response(serializer.data)
-    except Experience.DoesNotExist:
+    except JobSeeker.DoesNotExist:
         return Response({"error": "Experience not found for the given job seeker ID"}, status=404)
 
 class SingleExperienceView(generics.DestroyAPIView,generics.UpdateAPIView):
