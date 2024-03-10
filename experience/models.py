@@ -4,7 +4,6 @@ from accounts.models import JobSeeker
 class Experience(models.Model):
     role = models.CharField(max_length=100)
     company = models.CharField(max_length=100)
-    description = models.TextField()
     tech_stack = models.JSONField(default=list)
     start_month = models.CharField()  
     start_year = models.PositiveSmallIntegerField()
