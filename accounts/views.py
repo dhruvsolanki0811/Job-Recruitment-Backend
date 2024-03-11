@@ -29,7 +29,30 @@ def hello_world(request):
 class CreateOrganizationListView(generics.ListCreateAPIView):
     serializer_class=OrganizationSerializer
     queryset=Organization.objects.all()
-    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        # Generate access token and refresh token
+        user = serializer.instance.user
+        additional = {
+            "user":{
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,}
+        }
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        
+
+        response_data = {
+            "access": access_token,
+            "refresh": str(refresh),
+            **additional,
+        }   
+        
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 class OrganizationView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class=OrganizationSerializer
@@ -82,7 +105,31 @@ class OrganizationIdView(generics.RetrieveDestroyAPIView):
 class CreateJobSeekerListView(generics.ListCreateAPIView):
     serializer_class=JobSeekerSerializer
     queryset=JobSeeker.objects.all()
-    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        # Generate access token and refresh token
+        user = serializer.instance.user
+        additional = {
+            "user":{
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,}
+        }
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        
+
+        response_data = {
+            "access": access_token,
+            "refresh": str(refresh),
+            **additional,
+        }   
+        
+        return Response(response_data, status=status.HTTP_201_CREATED)
+
 class JobSeekerView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class=JobSeekerSerializer
     queryset=JobSeeker.objects.all()
