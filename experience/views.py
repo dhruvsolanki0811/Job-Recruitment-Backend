@@ -31,4 +31,4 @@ def get_experiences_by_user(request, jobseekername):
 class SingleExperienceView(generics.DestroyAPIView,generics.UpdateAPIView,generics.RetrieveAPIView):
     serializer_class=ExperienceSerializer
     queryset=Experience.objects.all()
-    authentication_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated]
