@@ -28,7 +28,7 @@ def get_experiences_by_user(request, jobseekername):
     except JobSeeker.DoesNotExist:
         return Response({"error": "Experience not found for the given job seeker ID"}, status=404)
 
-class SingleExperienceView(generics.DestroyAPIView,generics.UpdateAPIView):
+class SingleExperienceView(generics.DestroyAPIView,generics.UpdateAPIView,generics.RetrieveAPIView):
     serializer_class=ExperienceSerializer
     queryset=Experience.objects.all()
-    authentication_classes=IsAuthenticated
+    authentication_classes=[IsAuthenticated]

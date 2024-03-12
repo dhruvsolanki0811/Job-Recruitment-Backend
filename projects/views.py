@@ -31,4 +31,8 @@ def get_projects(_, jobseekerusername):
 class SingleProjectView(generics.RetrieveAPIView):
     serializer_class=ProjectSerializer
     queryset=Project.objects.all()
-    
+
+class SingleEditProjectView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class=ProjectSerializer
+    queryset=Project.objects.all()
+    permission_classes = [IsAuthenticated]
