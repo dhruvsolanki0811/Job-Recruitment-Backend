@@ -24,9 +24,10 @@ class CreateJobProfileListView(generics.ListCreateAPIView):
         'required_experience': ['exact', 'lte', 'gte'],
         'employee_type': ['exact','iexact'],
         'salary': ['exact', 'lte', 'gte'],
-        'organization__name': ['exact','iexact'],  # Filter for the nested field 'name' in 'organization'
+        'organization__name': ['exact','iexact'],
+        'organization__user__username': ['exact','iexact'],  # Filter for the nested field 'name' in 'organization'
     }
-    search_fields=['role','employee_type','job_description',"organization__name"]
+    search_fields=['role','employee_type','organization__name','job_description',"organization__user__username"]
     ordering_fields = ['salary']
     def get_queryset(self):
         queryset = JobProfile.objects.all()
