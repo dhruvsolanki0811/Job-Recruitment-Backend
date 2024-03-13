@@ -50,3 +50,9 @@ class JobProfileView(generics.RetrieveDestroyAPIView):
     serializer_class=JobProfileSerializer
     queryset=JobProfile.objects.all()
     
+    
+class JobProfileDeleteView(generics.DestroyAPIView):
+    serializer_class=JobProfileSerializer
+    queryset=JobProfile.objects.all()
+    permission_classes=[IsAuthenticated]
+    
