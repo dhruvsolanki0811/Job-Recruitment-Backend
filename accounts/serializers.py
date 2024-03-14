@@ -20,7 +20,7 @@ class JobSeekerSerializer(serializers.ModelSerializer):
     firstname = serializers.CharField(source='user.first_name')  
     password=serializers.CharField(source='user.password',write_only=True,style={'input_type': 'password'})
 
-    resume = serializers.FileField( required=False,write_only=True)
+    resume = serializers.FileField( required=False)
     profile_pic = serializers.ImageField( required=False)
     
     
@@ -29,7 +29,6 @@ class JobSeekerSerializer(serializers.ModelSerializer):
         fields=['id','username', 'email', 'password','firstname','lastname','description','no_of_years_experience','phone_number','resume','skills','resume', 'profile_pic' ]
         extra_kwargs = {
             'id':{'read_only':True},
-            'resume': {'write_only': True},
             }
     def create(self, validated_data):
         user_data = validated_data.pop('user')
