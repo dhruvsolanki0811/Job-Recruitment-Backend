@@ -60,6 +60,34 @@ class JobSeekerSerializer(serializers.ModelSerializer):
 
         return jobseeker 
     
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {})
+        user = instance.user
+
+        if 'email' in user_data:
+            user.email = user_data['email']
+        if 'username' in user_data:
+            user.username = user_data['username']
+        if 'first_name' in user_data:
+            user.first_name = user_data['first_name']
+        if 'last_name' in user_data:
+            user.last_name = user_data['last_name']
+        if 'password' in user_data:
+            user.set_password(user_data['password'])
+
+        user.save()
+
+        instance.description = validated_data.get('description', instance.description)
+        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
+        instance.no_of_years_experience = validated_data.get('no_of_years_experience', instance.no_of_years_experience)
+        instance.resume = validated_data.get('resume', instance.resume)
+        instance.profile_pic = validated_data.get('profile_pic', instance.profile_pic)
+        instance.skills = validated_data.get('skills', instance.skills)
+
+        instance.save()
+
+        return instance
+
     
     
 class OrganizationSerializer(serializers.ModelSerializer):
